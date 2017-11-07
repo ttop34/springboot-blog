@@ -1,58 +1,50 @@
 package com.codeup.blog.controllers;
-
 import com.codeup.blog.models.Post;
 import com.codeup.blog.services.PostSvc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-
+import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
-
-@Controller
+import java.util.List;
+@Controller //Step 1 Annotate
 public class PostsController {
-    private final PostSvc postSvc;
-
-    @Autowired
-    public PostsController(PostSvc postSvc) {
+    private final PostSvc postSvc; //create property
+    @Autowired //Constructor injection, passed to controller; Spring knows to use this one and ignore others
+    public PostsController(PostSvc postSvc){ //constructor same name as the class; pass property
         this.postSvc = postSvc;
     }
-
-    @GetMapping("/posts")
-    public String showAll(Model vModel){
-
-        ArrayList<Post> posts = new ArrayList<>();
-
-        posts.add(new Post("Example 1", "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci atque commodi eligendi necessitatibus voluptates. At distinctio dolores minus molestiae mollitia nemo sapiente ut veniam voluptates! Corporis distinctio error quaerat vel!"));
-
-        posts.add(new Post("Example 2", "QWE Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci atque commodi eligendi necessitatibus voluptates. At distinctio dolores minus molestiae mollitia nemo sapiente ut veniam voluptates! Corporis distinctio error quaerat vel!"));
-
-        posts.add(new Post("Example 3", "ASD Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci atque commodi eligendi necessitatibus voluptates. At distinctio dolores minus molestiae mollitia nemo sapiente ut veniam voluptates! Corporis distinctio error quaerat vel!"));
-
-        vModel.addAttribute("posts", posts);
-
+    @GetMapping("/posts") //Step 2 what url want to respond to
+    public String showAll(Model vModel) {
+//        ArrayList<Post> posts = new ArrayList<>();
+//
+//        posts.add(new Post("Title One", "Body goes here"));
+//        posts.add(new Post("Title 2", "Body goes here"));
+//        posts.add(new Post("Title 3", "Body goes here"));
+//        List<Post> posts = postSvc.findAll();
+//        vModel.addAttribute("posts", posts);
+        vModel.addAttribute("posts", postSvc.findAll());
         return "posts/index";
     }
-
     @GetMapping("/posts/{id}")
-    public String showPost(@PathVariable int id, Model vModel){
-
-        Post post = new Post("Example 1", "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci atque commodi eligendi necessitatibus voluptates. At distinctio dolores minus molestiae mollitia nemo sapiente ut veniam voluptates! Corporis distinctio error quaerat vel!");
-
-        vModel.addAttribute("post", post);
+    public String singlePost(@PathVariable int id, Model vModel) {
+//        Post post = new Post("Example 1", "Body goes here");
+        vModel.addAttribute("post", postSvc.findOne(id));
         return "posts/show";
     }
-
-    @GetMapping("/posts/create")
-    public String showCreateForm(){
-        return "view the form for creating a post";
+    @GetMapping("/posts/create") //url to view
+    public String ViewCreateForm(Model vModel) { //make sure has model that represents view
+        vModel.addAttribute("post", new Post());
+        return "posts/create"; //actual file returned
     }
-
-    @PostMapping("/posts/create")
-    public String createPost(){
-        return "create a new post";
+    @PostMapping("/posts/create") //
+    public String CreatePost(@ModelAttribute Post post) { //use model attribute; accepts object of type post
+        postSvc.save(post);
+        return "redirect:/posts";
     }
-
+    @GetMapping("/posts/{id}/edit")
+    public String editPost(@PathVariable int id, Model vModel) {
+        vModel.addAttribute("post", postSvc.findOne(id));
+        return "posts/edit";
+    }
 }

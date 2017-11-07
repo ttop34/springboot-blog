@@ -1,48 +1,39 @@
-/*
- * This source file is subject to the license that is bundled with this package in the file LICENSE.
- */
 package com.codeup.blog.services;
-
 import com.codeup.blog.models.Post;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
-
-@Service
+@Service //Step 1 Annotate class- Spring Boot can't create object
 public class PostSvc {
-    private List<Post> posts;
-
-    public PostSvc() {
-        posts = new ArrayList<>();
-        createDummyPosts();
+    private List<Post> posts = new ArrayList<>(); //keep an array list of posts internally
+    public PostSvc() { //constructor
+        createPosts();
     }
-
-    public Post findById(long id) {
-        return posts.get((int) id - 1);
-    }
-
-    public List<Post> findAll() {
+    public List<Post> findAll() {  //returns ALL posts and takes place of SHOWALL in posts controller
         return posts;
     }
-
-    private void createDummyPosts() {
-        save(new Post("Title 1", "Body 1"));
-        save(new Post("Title 2", "Body 2"));
-        save(new Post("Title 3", "Body 3"));
-        save(new Post("Title 4", "Body 4"));
-        Post longPost = new Post(
-                "Example 1",
-                "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci atque commodi eligendi necessitatibus voluptates. At distinctio dolores minus molestiae mollitia nemo sapiente ut veniam voluptates! Corporis distinctio error quaerat vel!"
-        );
-        save(longPost);
-        save(new Post("Example 2", "QWE Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci atque commodi eligendi necessitatibus voluptates. At distinctio dolores minus molestiae mollitia nemo sapiente ut veniam voluptates! Corporis distinctio error quaerat vel!"));
-        save(new Post("Example 3", "ASD Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci atque commodi eligendi necessitatibus voluptates. At distinctio dolores minus molestiae mollitia nemo sapiente ut veniam voluptates! Corporis distinctio error quaerat vel!"));
-    }
-
     public Post save(Post post) {
-        post.setId(posts.size() + 1);
+        post.setId((long) (posts.size() + 1));
         posts.add(post);
         return post;
+    }
+    public Post findOne(long id) {
+        return posts.get((int) (id - 1));
+    }
+    private void createPosts() { // same data that was in SHOWALL in posts controller
+        // create some post objects and add them to the posts list
+        // with the save method
+        this.save(new Post(
+                1L, "First Title", "Description 1"
+        ));
+        this.save(new Post(
+                2L, "Second Title", "Description 2"
+        ));
+        this.save(new Post(
+                3L, "Third Title", "Description 3"
+        ));
+        this.save(new Post(
+                4L, "Fourth Title", "Description 4"
+        ));
     }
 }
