@@ -1,39 +1,37 @@
 package com.codeup.blog.services;
 import com.codeup.blog.models.Post;
+import com.codeup.blog.repositories.PostsRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
+
 import java.util.List;
+
 @Service //Step 1 Annotate class- Spring Boot can't create object
 public class PostSvc {
-    private List<Post> posts = new ArrayList<>(); //keep an array list of posts internally
-    public PostSvc() { //constructor
-        createPosts();
+
+    private final PostsRepository postsDoa;
+
+    @Autowired
+    public PostSvc(PostsRepository postsDoa) {
+        this.postsDoa = postsDoa;
     }
-    public List<Post> findAll() {  //returns ALL posts and takes place of SHOWALL in posts controller
-        return posts;
+
+    public Iterable<Post> findAll() {  //returns ALL posts and takes place of SHOWALL in posts controller
+        return postsDoa.findAll();
     }
+
     public Post save(Post post) {
-        post.setId((long) (posts.size() + 1));
-        posts.add(post);
+        postsDoa.save(post);
         return post;
     }
+
     public Post findOne(long id) {
-        return posts.get((int) (id - 1));
+        return postsDoa.findOne(id);
     }
-    private void createPosts() { // same data that was in SHOWALL in posts controller
-        // create some post objects and add them to the posts list
-        // with the save method
-        this.save(new Post(
-                1L, "First Title", "Description 1"
-        ));
-        this.save(new Post(
-                2L, "Second Title", "Description 2"
-        ));
-        this.save(new Post(
-                3L, "Third Title", "Description 3"
-        ));
-        this.save(new Post(
-                4L, "Fourth Title", "Description 4"
-        ));
+
+    public void deletePost(long id){
+        postsDoa.delete(id);
     }
+
+
 }

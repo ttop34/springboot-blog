@@ -1,18 +1,19 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
 
 </head>
 <body>
-
-<p>You should not see this</p>
 
 <nav id="my-nav" class="navbar" th:fragment="mainNavbar">
     <ul>
         <li>Index</li>
         <li>Login</li>
         <li>Register</li>
-        <li>Logout</li>
+        <li sec:authorize="isAuthenticated()"> <form th:action="@{/logout}" th:method="post">
+            <button class="btn-link btn" style="margin-top: 8px">Logout</button>
+        </form></li>
     </ul>
 </nav>
 
